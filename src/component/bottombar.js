@@ -16,30 +16,34 @@ class DropdownMore extends Dropdown {
 
   reset(items) {
     const eles = items.map((it, i) => h('div', `${cssPrefix}-item`)
-      .css('width', '150px')
-      .css('font-weight', 'normal')
-      .on('click', () => {
-        this.contentClick(i);
-        this.hide();
-      })
-      .child(it));
+    .css('width', '150px')
+    .css('font-weight', 'normal')
+    .on('click', () => {
+      this.contentClick(i);
+      this.hide();
+    })
+    .child(it));
     this.setContentChildren(...eles);
   }
 
-  setTitle() {}
+  setTitle() {
+  }
 }
 
 const menuItems = [
-  { key: 'delete', title: tf('contextmenu.deleteSheet') },
+  {
+    key: 'delete',
+    title: tf('contextmenu.deleteSheet')
+  },
 ];
 
 function buildMenuItem(item) {
   return h('div', `${cssPrefix}-item`)
-    .child(item.title())
-    .on('click', () => {
-      this.itemClick(item.key);
-      this.hide();
-    });
+  .child(item.title())
+  .on('click', () => {
+    this.itemClick(item.key);
+    this.hide();
+  });
 }
 
 function buildMenu() {
@@ -49,10 +53,11 @@ function buildMenu() {
 class ContextMenu {
   constructor() {
     this.el = h('div', `${cssPrefix}-contextmenu`)
-      .css('width', '160px')
-      .children(...buildMenu.call(this))
-      .hide();
-    this.itemClick = () => {};
+    .css('width', '160px')
+    .children(...buildMenu.call(this))
+    .hide();
+    this.itemClick = () => {
+    };
   }
 
   hide() {
@@ -70,10 +75,14 @@ class ContextMenu {
 }
 
 export default class Bottombar {
-  constructor(addFunc = () => {},
-    swapFunc = () => {},
-    deleteFunc = () => {},
-    updateFunc = () => {}) {
+  constructor(addFunc = () => {
+    },
+    swapFunc = () => {
+    },
+    deleteFunc = () => {
+    },
+    updateFunc = () => {
+    }) {
     this.swapFunc = swapFunc;
     this.updateFunc = updateFunc;
     this.dataNames = [];
@@ -85,10 +94,13 @@ export default class Bottombar {
     });
     this.contextMenu = new ContextMenu();
     this.contextMenu.itemClick = deleteFunc;
-    this.el = h('div', `${cssPrefix}-bottombar`).children(
+    this.el = h('div', `${cssPrefix}-bottombar`)
+    .children(
       this.contextMenu.el,
-      this.menuEl = h('ul', `${cssPrefix}-menu`).child(
-        h('li', '').children(
+      this.menuEl = h('ul', `${cssPrefix}-menu`)
+      .child(
+        h('li', '')
+        .children(
           new Icon('add').on('click', () => {
             if (this.dataNames.length < 10) {
               addFunc();
@@ -96,7 +108,8 @@ export default class Bottombar {
               xtoast('tip', 'it less than or equal to 10');
             }
           }),
-          h('span', '').child(this.moreEl),
+          h('span', '')
+          .child(this.moreEl),
         ),
       ),
     );
@@ -104,14 +117,20 @@ export default class Bottombar {
 
   addItem(name, active) {
     this.dataNames.push(name);
-    const item = h('li', active ? 'active' : '').child(name);
+    const item = h('li', active ? 'active' : '')
+    .child(name);
     item.on('click', () => {
       this.clickSwap2(item);
-    }).on('contextmenu', (evt) => {
+    })
+    .on('contextmenu', (evt) => {
       const { offsetLeft, offsetHeight } = evt.target;
-      this.contextMenu.setOffset({ left: offsetLeft, bottom: offsetHeight + 1 });
+      this.contextMenu.setOffset({
+        left: offsetLeft,
+        bottom: offsetHeight + 1
+      });
       this.deleteEl = item;
-    }).on('dblclick', () => {
+    })
+    .on('dblclick', () => {
       const v = item.html();
       const input = new FormInput('auto', '');
       input.val(v);
@@ -126,7 +145,8 @@ export default class Bottombar {
         this.updateFunc(nindex, value);
         */
       });
-      item.html('').child(input.el);
+      item.html('')
+      .child(input.el);
       input.focus();
     });
     if (active) {
@@ -140,7 +160,8 @@ export default class Bottombar {
   renameItem(index, value) {
     this.dataNames.splice(index, 1, value);
     this.moreEl.reset(this.dataNames);
-    this.items[index].html('').child(value);
+    this.items[index].html('')
+    .child(value);
     this.updateFunc(index, value);
   }
 

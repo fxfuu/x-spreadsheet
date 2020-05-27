@@ -5,16 +5,16 @@ import { formulam } from '../core/formula';
 import { formatm } from '../core/format';
 
 import {
-  Draw, DrawBox, thinLineWidth, npx,
+  Draw, DrawBox, thinLineWidth, npx
 } from '../canvas/draw';
-import de from "../locale/de";
+import de from '../locale/de';
 // gobal var
 const cellPaddingWidth = 5;
 const tableFixedHeaderCleanStyle = { fillStyle: '#f4f5f8' };
 const tableGridStyle = {
   fillStyle: '#fff',
   lineWidth: thinLineWidth,
-  strokeStyle: '#e6e6e6',
+  strokeStyle: '#e6e6e6'
 };
 
 function tableFixedHeaderStyle() {
@@ -24,13 +24,13 @@ function tableFixedHeaderStyle() {
     font: `500 ${npx(12)}px Source Sans Pro`,
     fillStyle: '#585757',
     lineWidth: thinLineWidth(),
-    strokeStyle: '#e6e6e6',
+    strokeStyle: '#e6e6e6'
   };
 }
 
 function getDrawBox(data, rindex, cindex, yoffset = 0) {
   const {
-    left, top, width, height,
+    left, top, width, height
   } = data.cellRect(rindex, cindex);
   return new DrawBox(left, top + yoffset, width, height, cellPaddingWidth);
 }
@@ -96,7 +96,7 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
       font,
       color: style.color,
       strike: style.strike,
-      underline: style.underline,
+      underline: style.underline
     }, style.textwrap);
     // error
     const error = data.validations.getError(rindex, cindex);
@@ -131,7 +131,7 @@ function renderContent(viewRange, fw, fh, tx, ty) {
   const { draw, data } = this;
   draw.save();
   draw.translate(fw, fh)
-    .translate(tx, ty);
+  .translate(tx, ty);
 
   const { exceptRowSet } = data;
   // const exceptRows = Array.from(exceptRowSet);
@@ -179,7 +179,7 @@ function renderSelectedHeaderCell(x, y, w, h) {
   const { draw } = this;
   draw.save();
   draw.attr({ fillStyle: 'rgba(75, 137, 255, 0.08)' })
-    .fillRect(x, y, w, h);
+  .fillRect(x, y, w, h);
   draw.restore();
 }
 
@@ -212,7 +212,7 @@ function renderFixedHeaders(type, viewRange, w, h, tx, ty) {
   }
 
   const {
-    sri, sci, eri, eci,
+    sri, sci, eri, eci
   } = data.selector.range;
   // console.log(data.selectIndexes);
   // draw text
@@ -271,19 +271,19 @@ function renderFixedLeftTopCell(fw, fh) {
   }
   // left-top-cell
   draw.attr({ fillStyle: '#f4f5f8' })
-    .fillRect(0, 0, fw, fh);
+  .fillRect(0, 0, fw, fh);
   draw.restore();
 }
 
 function renderContentGrid({
-  sri, sci, eri, eci, w, h,
+  sri, sci, eri, eci, w, h
 }, fw, fh, tx, ty) {
   const { draw, data } = this;
   const { settings } = data;
 
   draw.save();
   draw.attr(tableGridStyle)
-    .translate(fw + tx, fh + ty);
+  .translate(fw + tx, fh + ty);
   // const sumWidth = cols.sumWidth(sci, eci + 1);
   // const sumHeight = rows.sumHeight(sri, eri + 1);
   // console.log('sumWidth:', sumWidth);
@@ -318,8 +318,8 @@ function renderFreezeHighlightLine(fw, fh, ftw, fth) {
   const twidth = data.viewWidth() - fw;
   const theight = data.viewHeight() - fh;
   draw.save()
-    .translate(fw, fh)
-    .attr({ strokeStyle: 'rgba(75, 137, 255, .6)' });
+  .translate(fw, fh)
+  .attr({ strokeStyle: 'rgba(75, 137, 255, .6)' });
   draw.line([0, fth], [twidth, fth]);
   draw.line([ftw, 0], [ftw, theight]);
   draw.restore();
@@ -346,7 +346,6 @@ class Table {
     const fw = cols.indexWidth;
     // fixed height of header
     const fh = rows.height;
-
     this.draw.resize(data.viewWidth(), data.viewHeight());
     this.clear();
 

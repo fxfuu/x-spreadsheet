@@ -7,7 +7,6 @@ import { cssPrefix } from './config';
 import { locale } from './locale/locale';
 import './index.less';
 
-
 class Spreadsheet {
   constructor(selectors, options = {}) {
     let targetEl = selectors;
@@ -34,7 +33,10 @@ class Spreadsheet {
     // create canvas element
     targetEl.appendChild(rootEl.el);
     this.sheet = new Sheet(rootEl, this.data);
-    rootEl.child(this.bottombar.el);
+
+    if (options.showBottomBar) {
+      rootEl.child(this.bottombar.el);
+    }
   }
 
   addSheet(name, active = true) {
