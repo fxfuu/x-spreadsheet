@@ -1,6 +1,6 @@
 {
-  "name": "x-data-spreadsheet",
-  "version": "1.1.1",
+  "name": "zkxg-spreadsheet",
+  "version": "1.2.0",
   "description": "a javascript xpreadsheet",
   "main": "src/index.js",
   "files": [

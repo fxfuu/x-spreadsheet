@@ -7,6 +7,7 @@ import { formatm } from '../core/format';
 import {
   Draw, DrawBox, thinLineWidth, npx,
 } from '../canvas/draw';
+import de from "../locale/de";
 // gobal var
 const cellPaddingWidth = 5;
 const tableFixedHeaderCleanStyle = { fillStyle: '#f4f5f8' };
@@ -15,6 +16,7 @@ const tableGridStyle = {
   lineWidth: thinLineWidth,
   strokeStyle: '#e6e6e6',
 };
+
 function tableFixedHeaderStyle() {
   return {
     textAlign: 'center',
@@ -32,6 +34,7 @@ function getDrawBox(data, rindex, cindex, yoffset = 0) {
   } = data.cellRect(rindex, cindex);
   return new DrawBox(left, top + yoffset, width, height, cellPaddingWidth);
 }
+
 /*
 function renderCellBorders(bboxes, translateFunc) {
   const { draw } = this;
@@ -51,14 +54,18 @@ function renderCellBorders(bboxes, translateFunc) {
 
 export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
   const { sortedRowMap, rows, cols } = data;
-  if (rows.isHide(rindex) || cols.isHide(cindex)) return;
+  if (rows.isHide(rindex) || cols.isHide(cindex)) {
+    return;
+  }
   let nrindex = rindex;
   if (sortedRowMap.has(rindex)) {
     nrindex = sortedRowMap.get(rindex);
   }
 
   const cell = data.getCell(nrindex, cindex);
-  if (cell === null) return;
+  if (cell === null) {
+    return;
+  }
   let frozen = false;
   if ('editable' in cell && cell.editable === false) {
     frozen = true;
@@ -74,7 +81,8 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
   }
   draw.rect(dbox, () => {
     // render text
-    let cellText = _cell.render(cell.text || '', formulam, (y, x) => (data.getCellTextOrDefault(x, y)));
+    let cellText = _cell.render(cell.text || '', formulam,
+      (y, x) => (data.getCellTextOrDefault(x, y)));
     if (style.format) {
       // console.log(data.formatm, '>>', cell.format);
       cellText = formatm[style.format].render(cellText);
@@ -106,7 +114,9 @@ function renderAutofilter(viewRange) {
   const { data, draw } = this;
   if (viewRange) {
     const { autoFilter } = data;
-    if (!autoFilter.active()) return;
+    if (!autoFilter.active()) {
+      return;
+    }
     const afRange = autoFilter.hrange();
     if (viewRange.intersects(afRange)) {
       afRange.each((ri, ci) => {
@@ -134,7 +144,8 @@ function renderContent(viewRange, fw, fh, tx, ty) {
     return !ret;
   };
 
-  const exceptRowTotalHeight = data.exceptRowTotalHeight(viewRange.sri, viewRange.eri);
+  const exceptRowTotalHeight = data.exceptRowTotalHeight(viewRange.sri,
+    viewRange.eri);
   // 1 render cell
   draw.save();
   draw.translate(0, -exceptRowTotalHeight);
@@ -142,7 +153,6 @@ function renderContent(viewRange, fw, fh, tx, ty) {
     renderCell(draw, data, ri, ci);
   }, ri => filteredTranslateFunc(ri));
   draw.restore();
-
 
   // 2 render mergeCell
   const rset = new Set();
@@ -181,16 +191,25 @@ function renderSelectedHeaderCell(x, y, w, h) {
 // ty: moving distance on y-axis
 function renderFixedHeaders(type, viewRange, w, h, tx, ty) {
   const { draw, data } = this;
+  const { settings } = data;
   const sumHeight = viewRange.h; // rows.sumHeight(viewRange.sri, viewRange.eri + 1);
   const sumWidth = viewRange.w; // cols.sumWidth(viewRange.sci, viewRange.eci + 1);
   const nty = ty + h;
   const ntx = tx + w;
 
   draw.save();
+  if (!settings.showHeader) {
+    draw.restore();
+    return;
+  }
   // draw rect background
   draw.attr(tableFixedHeaderCleanStyle);
-  if (type === 'all' || type === 'left') draw.fillRect(0, nty, w, sumHeight);
-  if (type === 'all' || type === 'top') draw.fillRect(ntx, 0, sumWidth, h);
+  if (type === 'all' || type === 'left') {
+    draw.fillRect(0, nty, w, sumHeight);
+  }
+  if (type === 'all' || type === 'top') {
+    draw.fillRect(ntx, 0, sumWidth, h);
+  }
 
   const {
     sri, sci, eri, eci,
@@ -243,8 +262,13 @@ function renderFixedHeaders(type, viewRange, w, h, tx, ty) {
 }
 
 function renderFixedLeftTopCell(fw, fh) {
-  const { draw } = this;
+  const { draw, data } = this;
+  const { settings } = data;
   draw.save();
+  if (!settings.showHeader) {
+    draw.restore();
+    return;
+  }
   // left-top-cell
   draw.attr({ fillStyle: '#f4f5f8' })
     .fillRect(0, 0, fw, fh);
@@ -271,12 +295,20 @@ function renderContentGrid({
   // console.log('rowStart:', rowStart, ', rowLen:', rowLen);
   data.rowEach(sri, eri, (i, y, ch) => {
     // console.log('y:', y);
-    if (i !== sri) draw.line([0, y], [w, y]);
-    if (i === eri) draw.line([0, y + ch], [w, y + ch]);
+    if (i !== sri) {
+      draw.line([0, y], [w, y]);
+    }
+    if (i === eri) {
+      draw.line([0, y + ch], [w, y + ch]);
+    }
   });
   data.colEach(sci, eci, (i, x, cw) => {
-    if (i !== sci) draw.line([x, 0], [x, h]);
-    if (i === eci) draw.line([x + cw, 0], [x + cw, h]);
+    if (i !== sci) {
+      draw.line([x, 0], [x, h]);
+    }
+    if (i === eci) {
+      draw.line([x + cw, 0], [x + cw, h]);
+    }
   });
   draw.restore();
 }

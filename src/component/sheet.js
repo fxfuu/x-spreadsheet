@@ -1,6 +1,6 @@
 /* global window */
-import { h } from './element';
-import { bind, mouseMoveUp, bindTouch } from './event';
+import {h} from './element';
+import {bind, mouseMoveUp, bindTouch} from './event';
 import Resizer from './resizer';
 import Scrollbar from './scrollbar';
 import Selector from './selector';
@@ -11,9 +11,9 @@ import Table from './table';
 import Toolbar from './toolbar/index';
 import ModalValidation from './modal_validation';
 import SortFilter from './sort_filter';
-import { xtoast } from './message';
-import { cssPrefix } from '../config';
-import { formulas } from '../core/formula';
+import {xtoast} from './message';
+import {cssPrefix} from '../config';
+import {formulas} from '../core/formula';
 
 /**
  * @desc throttle fn
@@ -44,26 +44,28 @@ function scrollbarMove() {
   const tableOffset = this.getTableOffset();
   // console.log(',l:', l, ', left:', left, ', tOffset.left:', tableOffset.width);
   if (Math.abs(left) + width > tableOffset.width) {
-    horizontalScrollbar.move({ left: l + width - tableOffset.width });
+    horizontalScrollbar.move({left: l + width - tableOffset.width});
   } else {
     const fsw = data.freezeTotalWidth();
     if (left < fsw) {
-      horizontalScrollbar.move({ left: l - 1 - fsw });
+      horizontalScrollbar.move({left: l - 1 - fsw});
     }
   }
   // console.log('top:', top, ', height:', height, ', tof.height:', tableOffset.height);
   if (Math.abs(top) + height > tableOffset.height) {
-    verticalScrollbar.move({ top: t + height - tableOffset.height - 1 });
+    verticalScrollbar.move({top: t + height - tableOffset.height - 1});
   } else {
     const fsh = data.freezeTotalHeight();
     if (top < fsh) {
-      verticalScrollbar.move({ top: t - 1 - fsh });
+      verticalScrollbar.move({top: t - 1 - fsh});
     }
   }
 }
 
 function selectorSet(multiple, ri, ci, indexesUpdated = true, moving = false) {
-  if (ri === -1 && ci === -1) return;
+  if (ri === -1 && ci === -1) {
+    return;
+  }
   const {
     table, selector, toolbar, data,
     contextMenu,
@@ -88,23 +90,35 @@ function selectorMove(multiple, direction) {
   const {
     selector, data,
   } = this;
-  const { rows, cols } = data;
+  const {rows, cols} = data;
   let [ri, ci] = selector.indexes;
-  const { eri, eci } = selector.range;
+  const {eri, eci} = selector.range;
   if (multiple) {
     [ri, ci] = selector.moveIndexes;
   }
   // console.log('selector.move:', ri, ci);
   if (direction === 'left') {
-    if (ci > 0) ci -= 1;
+    if (ci > 0) {
+      ci -= 1;
+    }
   } else if (direction === 'right') {
-    if (eci !== ci) ci = eci;
-    if (ci < cols.len - 1) ci += 1;
+    if (eci !== ci) {
+      ci = eci;
+    }
+    if (ci < cols.len - 1) {
+      ci += 1;
+    }
   } else if (direction === 'up') {
-    if (ri > 0) ri -= 1;
+    if (ri > 0) {
+      ri -= 1;
+    }
   } else if (direction === 'down') {
-    if (eri !== ri) ri = eri;
-    if (ri < rows.len - 1) ri += 1;
+    if (eri !== ri) {
+      ri = eri;
+    }
+    if (ri < rows.len - 1) {
+      ri += 1;
+    }
   } else if (direction === 'row-first') {
     ci = 0;
   } else if (direction === 'row-last') {
@@ -124,13 +138,17 @@ function selectorMove(multiple, direction) {
 // private methods
 function overlayerMousemove(evt) {
   // console.log('x:', evt.offsetX, ', y:', evt.offsetY);
-  if (evt.buttons !== 0) return;
-  if (evt.target.className === `${cssPrefix}-resizer-hover`) return;
-  const { offsetX, offsetY } = evt;
+  if (evt.buttons !== 0) {
+    return;
+  }
+  if (evt.target.className === `${cssPrefix}-resizer-hover`) {
+    return;
+  }
+  const {offsetX, offsetY} = evt;
   const {
     rowResizer, colResizer, tableEl, data,
   } = this;
-  const { rows, cols } = data;
+  const {rows, cols} = data;
   if (offsetX > cols.indexWidth && offsetY > rows.height) {
     rowResizer.hide();
     colResizer.hide();
@@ -167,15 +185,15 @@ function overlayerMousemove(evt) {
 }
 
 function overlayerMousescroll(evt) {
-  const { verticalScrollbar, horizontalScrollbar, data } = this;
-  const { top } = verticalScrollbar.scroll();
-  const { left } = horizontalScrollbar.scroll();
+  const {verticalScrollbar, horizontalScrollbar, data} = this;
+  const {top} = verticalScrollbar.scroll();
+  const {left} = horizontalScrollbar.scroll();
   // console.log('evt:::', evt.wheelDelta, evt.detail * 40);
 
-  const { rows, cols } = data;
+  const {rows, cols} = data;
 
   // deltaY for vertical delta
-  const { deltaY, deltaX } = evt;
+  const {deltaY, deltaX} = evt;
   const loopValue = (ii, vFunc) => {
     let i = ii;
     let v = 0;
@@ -193,14 +211,14 @@ function overlayerMousescroll(evt) {
       const ri = data.scroll.ri + 1;
       if (ri < rows.len) {
         const rh = loopValue(ri, i => rows.getHeight(i));
-        verticalScrollbar.move({ top: top + rh - 1 });
+        verticalScrollbar.move({top: top + rh - 1});
       }
     } else {
       // down
       const ri = data.scroll.ri - 1;
       if (ri >= 0) {
         const rh = loopValue(ri, i => rows.getHeight(i));
-        verticalScrollbar.move({ top: ri === 0 ? 0 : top - rh });
+        verticalScrollbar.move({top: ri === 0 ? 0 : top - rh});
       }
     }
   };
@@ -212,14 +230,14 @@ function overlayerMousescroll(evt) {
       const ci = data.scroll.ci + 1;
       if (ci < cols.len) {
         const cw = loopValue(ci, i => cols.getWidth(i));
-        horizontalScrollbar.move({ left: left + cw - 1 });
+        horizontalScrollbar.move({left: left + cw - 1});
       }
     } else {
       // right
       const ci = data.scroll.ci - 1;
       if (ci >= 0) {
         const cw = loopValue(ci, i => cols.getWidth(i));
-        horizontalScrollbar.move({ left: ci === 0 ? 0 : left - cw });
+        horizontalScrollbar.move({left: ci === 0 ? 0 : left - cw});
       }
     }
   };
@@ -227,34 +245,41 @@ function overlayerMousescroll(evt) {
   const tempX = Math.abs(deltaX);
   const temp = Math.max(tempY, tempX);
   // detail for windows/mac firefox vertical scroll
-  if (/Firefox/i.test(window.navigator.userAgent)) throttle(moveY(evt.detail), 50);
-  if (temp === tempX) throttle(moveX(deltaX), 50);
-  if (temp === tempY) throttle(moveY(deltaY), 50);
+  if (/Firefox/i.test(window.navigator.userAgent)) {
+    throttle(moveY(evt.detail),
+        50);
+  }
+  if (temp === tempX) {
+    throttle(moveX(deltaX), 50);
+  }
+  if (temp === tempY) {
+    throttle(moveY(deltaY), 50);
+  }
 }
 
 function overlayerTouch(direction, distance) {
-  const { verticalScrollbar, horizontalScrollbar } = this;
-  const { top } = verticalScrollbar.scroll();
-  const { left } = horizontalScrollbar.scroll();
+  const {verticalScrollbar, horizontalScrollbar} = this;
+  const {top} = verticalScrollbar.scroll();
+  const {left} = horizontalScrollbar.scroll();
 
   if (direction === 'left' || direction === 'right') {
-    horizontalScrollbar.move({ left: left - distance });
+    horizontalScrollbar.move({left: left - distance});
   } else if (direction === 'up' || direction === 'down') {
-    verticalScrollbar.move({ top: top - distance });
+    verticalScrollbar.move({top: top - distance});
   }
 }
 
 function verticalScrollbarSet() {
-  const { data, verticalScrollbar } = this;
-  const { height } = this.getTableOffset();
+  const {data, verticalScrollbar} = this;
+  const {height} = this.getTableOffset();
   const erth = data.exceptRowTotalHeight(0, -1);
   // console.log('erth:', erth);
   verticalScrollbar.set(height, data.rows.totalHeight() - erth);
 }
 
 function horizontalScrollbarSet() {
-  const { data, horizontalScrollbar } = this;
-  const { width } = this.getTableOffset();
+  const {data, horizontalScrollbar} = this;
+  const {width} = this.getTableOffset();
   if (data) {
     horizontalScrollbar.set(width, data.cols.totalWidth());
   }
@@ -298,26 +323,28 @@ function sheetReset() {
 }
 
 function clearClipboard() {
-  const { data, selector } = this;
+  const {data, selector} = this;
   data.clearClipboard();
   selector.hideClipboard();
 }
 
 function copy() {
-  const { data, selector } = this;
+  const {data, selector} = this;
   data.copy();
   selector.showClipboard();
 }
 
 function cut() {
-  const { data, selector } = this;
+  const {data, selector} = this;
   data.cut();
   selector.showClipboard();
 }
 
 function paste(what, evt) {
-  const { data } = this;
-  if (data.settings.mode === 'read') return;
+  const {data} = this;
+  if (data.settings.mode === 'read') {
+    return;
+  }
   if (data.paste(what, msg => xtoast('Tip', msg))) {
     sheetReset.call(this);
   } else if (evt) {
@@ -338,13 +365,13 @@ function unhideRowsOrCols(type, index) {
 }
 
 function autofilter() {
-  const { data } = this;
+  const {data} = this;
   data.autofilter();
   sheetReset.call(this);
 }
 
 function toolbarChangePaintformatPaste() {
-  const { toolbar } = this;
+  const {toolbar} = this;
   if (toolbar.paintformatActive()) {
     paste.call(this, 'format');
     clearClipboard.call(this);
@@ -358,20 +385,21 @@ function overlayerMousedown(evt) {
   const {
     selector, data, table, sortFilter,
   } = this;
-  const { offsetX, offsetY } = evt;
+  const {offsetX, offsetY} = evt;
   const isAutofillEl = evt.target.className === `${cssPrefix}-selector-corner`;
   const cellRect = data.getCellRectByXY(offsetX, offsetY);
   const {
     left, top, width, height,
   } = cellRect;
-  let { ri, ci } = cellRect;
+  let {ri, ci} = cellRect;
   // sort or filter
-  const { autoFilter } = data;
+  const {autoFilter} = data;
   if (autoFilter.includes(ri, ci)) {
     if (left + width - 20 < offsetX && top + height - 20 < offsetY) {
       const items = autoFilter.items(ci, (r, c) => data.rows.getCell(r, c));
-      sortFilter.set(ci, items, autoFilter.getFilter(ci), autoFilter.getSort(ci));
-      sortFilter.setOffset({ left, top: top + height + 2 });
+      sortFilter.set(ci, items, autoFilter.getFilter(ci),
+          autoFilter.getSort(ci));
+      sortFilter.setOffset({left, top: top + height + 2});
       return;
     }
   }
@@ -388,7 +416,7 @@ function overlayerMousedown(evt) {
     // mouse move up
     mouseMoveUp(window, (e) => {
       // console.log('mouseMoveUp::::');
-      ({ ri, ci } = data.getCellRectByXY(e.offsetX, e.offsetY));
+      ({ri, ci} = data.getCellRectByXY(e.offsetX, e.offsetY));
       if (isAutofillEl) {
         selector.showAutofill(ri, ci);
       } else if (e.buttons === 1 && !e.shiftKey) {
@@ -414,7 +442,7 @@ function overlayerMousedown(evt) {
 }
 
 function editorSetOffset() {
-  const { editor, data } = this;
+  const {editor, data} = this;
   const sOffset = data.getSelectedRect();
   const tOffset = this.getTableOffset();
   let sPosition = 'top';
@@ -426,15 +454,17 @@ function editorSetOffset() {
 }
 
 function editorSet() {
-  const { editor, data } = this;
-  if (data.settings.mode === 'read') return;
+  const {editor, data} = this;
+  if (data.settings.mode === 'read') {
+    return;
+  }
   editorSetOffset.call(this);
   editor.setCell(data.getSelectedCell(), data.getSelectedValidator());
   clearClipboard.call(this);
 }
 
 function verticalScrollbarMove(distance) {
-  const { data, table, selector } = this;
+  const {data, table, selector} = this;
   data.scrolly(distance, () => {
     selector.resetBRLAreaOffset();
     editorSetOffset.call(this);
@@ -443,7 +473,7 @@ function verticalScrollbarMove(distance) {
 }
 
 function horizontalScrollbarMove(distance) {
-  const { data, table, selector } = this;
+  const {data, table, selector} = this;
   data.scrollx(distance, () => {
     selector.resetBRTAreaOffset();
     editorSetOffset.call(this);
@@ -452,8 +482,8 @@ function horizontalScrollbarMove(distance) {
 }
 
 function rowResizerFinished(cRect, distance) {
-  const { ri } = cRect;
-  const { table, selector, data } = this;
+  const {ri} = cRect;
+  const {table, selector, data} = this;
   data.rows.setHeight(ri, distance);
   table.render();
   selector.resetAreaOffset();
@@ -462,8 +492,8 @@ function rowResizerFinished(cRect, distance) {
 }
 
 function colResizerFinished(cRect, distance) {
-  const { ci } = cRect;
-  const { table, selector, data } = this;
+  const {ci} = cRect;
+  const {table, selector, data} = this;
   data.cols.setWidth(ci, distance);
   // console.log('data:', data);
   table.render();
@@ -473,19 +503,21 @@ function colResizerFinished(cRect, distance) {
 }
 
 function dataSetCellText(text, state = 'finished') {
-  const { data, table } = this;
+  const {data, table} = this;
   // const [ri, ci] = selector.indexes;
-  if (data.settings.mode === 'read') return;
+  if (data.settings.mode === 'read') {
+    return;
+  }
   data.setSelectedCellText(text, state);
   if (state === 'finished') {
-    const { ri, ci } = data.selector;
+    const {ri, ci} = data.selector;
     this.trigger('cell-edited', text, ri, ci);
     table.render();
   }
 }
 
 function insertDeleteRowColumn(type) {
-  const { data } = this;
+  const {data} = this;
   if (type === 'insert-row') {
     data.insert('row');
   } else if (type === 'delete-row') {
@@ -514,7 +546,7 @@ function insertDeleteRowColumn(type) {
 }
 
 function toolbarChange(type, value) {
-  const { data } = this;
+  const {data} = this;
   if (type === 'undo') {
     this.undo();
   } else if (type === 'redo') {
@@ -522,8 +554,11 @@ function toolbarChange(type, value) {
   } else if (type === 'print') {
     this.print.preview();
   } else if (type === 'paintformat') {
-    if (value === true) copy.call(this);
-    else clearClipboard.call(this);
+    if (value === true) {
+      copy.call(this);
+    } else {
+      clearClipboard.call(this);
+    }
   } else if (type === 'clearformat') {
     insertDeleteRowColumn.call(this, 'delete-cell-format');
   } else if (type === 'link') {
@@ -535,7 +570,7 @@ function toolbarChange(type, value) {
     autofilter.call(this);
   } else if (type === 'freeze') {
     if (value) {
-      const { ri, ci } = data.selector;
+      const {ri, ci} = data.selector;
       this.freeze(ri, ci);
     } else {
       this.freeze(0, 0);
@@ -571,36 +606,40 @@ function sheetInitEvents() {
   } = this;
   // overlayer
   overlayerEl
-    .on('mousemove', (evt) => {
-      overlayerMousemove.call(this, evt);
-    })
-    .on('mousedown', (evt) => {
-      editor.clear();
-      contextMenu.hide();
-      // the left mouse button: mousedown → mouseup → click
-      // the right mouse button: mousedown → contenxtmenu → mouseup
-      if (evt.buttons === 2) {
-        if (this.data.xyInSelectedRect(evt.offsetX, evt.offsetY)) {
-          contextMenu.setPosition(evt.offsetX, evt.offsetY);
-        } else {
-          overlayerMousedown.call(this, evt);
-          contextMenu.setPosition(evt.offsetX, evt.offsetY);
-        }
-        evt.stopPropagation();
-      } else if (evt.detail === 2) {
-        editorSet.call(this);
+  .on('mousemove', (evt) => {
+    overlayerMousemove.call(this, evt);
+  })
+  .on('mousedown', (evt) => {
+    editor.clear();
+    contextMenu.hide();
+    // the left mouse button: mousedown → mouseup → click
+    // the right mouse button: mousedown → contenxtmenu → mouseup
+    if (evt.buttons === 2) {
+      if (this.data.xyInSelectedRect(evt.offsetX, evt.offsetY)) {
+        contextMenu.setPosition(evt.offsetX, evt.offsetY);
       } else {
         overlayerMousedown.call(this, evt);
+        contextMenu.setPosition(evt.offsetX, evt.offsetY);
       }
-    })
-    .on('mousewheel.stop', (evt) => {
-      overlayerMousescroll.call(this, evt);
-    })
-    .on('mouseout', (evt) => {
-      const { offsetX, offsetY } = evt;
-      if (offsetY <= 0) colResizer.hide();
-      if (offsetX <= 0) rowResizer.hide();
-    });
+      evt.stopPropagation();
+    } else if (evt.detail === 2) {
+      editorSet.call(this);
+    } else {
+      overlayerMousedown.call(this, evt);
+    }
+  })
+  .on('mousewheel.stop', (evt) => {
+    overlayerMousescroll.call(this, evt);
+  })
+  .on('mouseout', (evt) => {
+    const {offsetX, offsetY} = evt;
+    if (offsetY <= 0) {
+      colResizer.hide();
+    }
+    if (offsetX <= 0) {
+      rowResizer.hide();
+    }
+  });
 
   selector.inputChange = (v) => {
     dataSetCellText.call(this, v, 'input');
@@ -618,7 +657,8 @@ function sheetInitEvents() {
   toolbar.change = (type, value) => toolbarChange.call(this, type, value);
 
   // sort filter ok
-  sortFilter.ok = (ci, order, o, v) => sortFilterChange.call(this, ci, order, o, v);
+  sortFilter.ok = (ci, order, o, v) => sortFilterChange.call(this, ci, order, o,
+      v);
 
   // resizer finished callback
   rowResizer.finishedFn = (cRect, distance) => {
@@ -690,7 +730,9 @@ function sheetInitEvents() {
 
   // for selector
   bind(window, 'keydown', (evt) => {
-    if (!this.focusing) return;
+    if (!this.focusing) {
+      return;
+    }
     const keyCode = evt.keyCode || evt.which;
     const {
       key, ctrlKey, shiftKey, metaKey,
@@ -823,9 +865,9 @@ function sheetInitEvents() {
         insertDeleteRowColumn.call(this, 'delete-cell-text');
         evt.preventDefault();
       } else if ((keyCode >= 65 && keyCode <= 90)
-        || (keyCode >= 48 && keyCode <= 57)
-        || (keyCode >= 96 && keyCode <= 105)
-        || evt.key === '='
+          || (keyCode >= 48 && keyCode <= 57)
+          || (keyCode >= 96 && keyCode <= 105)
+          || evt.key === '='
       ) {
         dataSetCellText.call(this, evt.key, 'input');
         editorSet.call(this);
@@ -840,7 +882,7 @@ function sheetInitEvents() {
 export default class Sheet {
   constructor(targetEl, data) {
     this.eventMap = new Map();
-    const { view, showToolbar, showContextmenu } = data.settings;
+    const {view, showToolbar, showContextmenu} = data.settings;
     this.el = h('div', `${cssPrefix}-sheet`);
     this.toolbar = new Toolbar(data, view.width, !showToolbar);
     this.print = new Print(data);
@@ -856,9 +898,9 @@ export default class Sheet {
     this.horizontalScrollbar = new Scrollbar(false);
     // editor
     this.editor = new Editor(
-      formulas,
-      () => this.getTableOffset(),
-      data.rows.height,
+        formulas,
+        () => this.getTableOffset(),
+        data.rows.height,
     );
     // data validation
     this.modalValidation = new ModalValidation();
@@ -867,25 +909,25 @@ export default class Sheet {
     // selector
     this.selector = new Selector(data);
     this.overlayerCEl = h('div', `${cssPrefix}-overlayer-content`)
-      .children(
+    .children(
         this.editor.el,
         this.selector.el,
-      );
+    );
     this.overlayerEl = h('div', `${cssPrefix}-overlayer`)
-      .child(this.overlayerCEl);
+    .child(this.overlayerCEl);
     // sortFilter
     this.sortFilter = new SortFilter();
     // root element
     this.el.children(
-      this.tableEl,
-      this.overlayerEl.el,
-      this.rowResizer.el,
-      this.colResizer.el,
-      this.verticalScrollbar.el,
-      this.horizontalScrollbar.el,
-      this.contextMenu.el,
-      this.modalValidation.el,
-      this.sortFilter.el,
+        this.tableEl,
+        this.overlayerEl.el,
+        this.rowResizer.el,
+        this.colResizer.el,
+        this.verticalScrollbar.el,
+        this.horizontalScrollbar.el,
+        this.contextMenu.el,
+        this.modalValidation.el,
+        this.sortFilter.el,
     );
     // table
     this.table = new Table(this.tableEl.el, data);
@@ -901,7 +943,7 @@ export default class Sheet {
   }
 
   trigger(eventName, ...args) {
-    const { eventMap } = this;
+    const {eventMap} = this;
     if (eventMap.has(eventName)) {
       eventMap.get(eventName).call(this, ...args);
     }
@@ -928,7 +970,7 @@ export default class Sheet {
 
   // freeze rows or cols
   freeze(ri, ci) {
-    const { data } = this;
+    const {data} = this;
     data.setFreeze(ri, ci);
     sheetReset.call(this);
     return this;
@@ -950,13 +992,13 @@ export default class Sheet {
   }
 
   getRect() {
-    const { data } = this;
-    return { width: data.viewWidth(), height: data.viewHeight() };
+    const {data} = this;
+    return {width: data.viewWidth(), height: data.viewHeight()};
   }
 
   getTableOffset() {
-    const { rows, cols } = this.data;
-    const { width, height } = this.getRect();
+    const {rows, cols} = this.data;
+    const {width, height} = this.getRect();
     return {
       width: width - cols.indexWidth,
       height: height - rows.height,

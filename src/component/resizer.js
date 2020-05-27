@@ -1,25 +1,27 @@
 /* global window */
-import { h } from './element';
-import { mouseMoveUp } from './event';
-import { cssPrefix } from '../config';
+import {h} from './element';
+import {mouseMoveUp} from './event';
+import {cssPrefix} from '../config';
 
 export default class Resizer {
   constructor(vertical = false, minDistance) {
     this.moving = false;
     this.vertical = vertical;
-    this.el = h('div', `${cssPrefix}-resizer ${vertical ? 'vertical' : 'horizontal'}`).children(
-      this.unhideHoverEl = h('div', `${cssPrefix}-resizer-hover`)
+    this.el = h('div', `${cssPrefix}-resizer ${vertical ? 'vertical'
+        : 'horizontal'}`).children(
+        this.unhideHoverEl = h('div', `${cssPrefix}-resizer-hover`)
         .on('dblclick.stop', evt => this.mousedblclickHandler(evt))
         .css('position', 'absolute').hide(),
-      this.hoverEl = h('div', `${cssPrefix}-resizer-hover`)
+        this.hoverEl = h('div', `${cssPrefix}-resizer-hover`)
         .on('mousedown.stop', evt => this.mousedownHandler(evt)),
-      this.lineEl = h('div', `${cssPrefix}-resizer-line`).hide(),
+        this.lineEl = h('div', `${cssPrefix}-resizer-line`).hide(),
     ).hide();
     // cell rect
     this.cRect = null;
     this.finishedFn = null;
     this.minDistance = minDistance;
-    this.unhideFn = () => {};
+    this.unhideFn = () => {
+    };
   }
 
   showUnhide(index) {
@@ -38,7 +40,9 @@ export default class Resizer {
       moving, vertical, hoverEl, lineEl, el,
       unhideHoverEl,
     } = this;
-    if (moving) return;
+    if (moving) {
+      return;
+    }
     this.cRect = rect;
     const {
       left, top, width, height,
@@ -72,7 +76,9 @@ export default class Resizer {
   }
 
   mousedblclickHandler() {
-    if (this.unhideIndex) this.unhideFn(this.unhideIndex);
+    if (this.unhideIndex) {
+      this.unhideFn(this.unhideIndex);
+    }
   }
 
   mousedownHandler(evt) {
@@ -106,7 +112,9 @@ export default class Resizer {
       this.moving = false;
       this.hide();
       if (this.finishedFn) {
-        if (distance < minDistance) distance = minDistance;
+        if (distance < minDistance) {
+          distance = minDistance;
+        }
         this.finishedFn(cRect, distance);
       }
     });
